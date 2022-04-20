@@ -9,8 +9,7 @@ import cv2
 
 from vision.ssd.config.fd_config import define_img_size
 
-parser = argparse.ArgumentParser(
-    description='detect_imgs')
+parser = argparse.ArgumentParser(description='detect_imgs')
 
 parser.add_argument('--net_type', default="RFB", type=str,
                     help='The network architecture ,optional: RFB (higher precision) or slim (faster)')
@@ -64,7 +63,7 @@ for file_path in listdir:
     sum += boxes.size(0)
     for i in range(boxes.size(0)):
         box = boxes[i, :]
-        cv2.rectangle(orig_image, (box[0], box[1]), (box[2], box[3]), (0, 0, 255), 2)
+        cv2.rectangle(orig_image, (int(box[0]), int(box[1])), (int(box[2]), int(box[3])), (0, 0, 255), 2)
         b = probs[i]
         f.writelines([file_path[:-4],' ',str(b),' ',str(int(box[0])),' ',str(int(box[1])),' ',str(int(box[2])),' ',str(int(box[3])),'\n'])
         # label = f"""{voc_dataset.class_names[labels[i]]}: {probs[i]:.2f}"""
