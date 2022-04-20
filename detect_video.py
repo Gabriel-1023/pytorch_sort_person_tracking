@@ -1,8 +1,4 @@
-"""
-This code is used to batch detect images in a folder.
-"""
 import argparse
-import os
 import sys
 import time
 import numpy
@@ -53,19 +49,20 @@ def draw_bboxes(image, bboxes, line_thickness):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='detect_imgs')
 
-    parser.add_argument('--net_type', default="RFB", type=str, help='The network architecture ,optional: RFB (higher precision) or slim (faster)')
-    parser.add_argument('--input_size', default=320, type=int, help='define network input size,default optional value 128/160/320/480/640/1280')
-    parser.add_argument('--threshold', default=0.5, type=float, help='score threshold')
-    parser.add_argument('--candidate_size', default=1500, type=int,help='nms candidate size')
-    parser.add_argument('--path', default="imgs", type=str,help='imgs dir')
-    parser.add_argument('--test_device', default="cuda:0", type=str,help='cuda:0 or cpu')
+    parser.add_argument('--net_type', default="RFB", type=str,
+                        help='The network architecture ,optional: RFB (higher precision) or slim (faster)')
+    parser.add_argument('--input_size', default=320, type=int,
+                        help='define network input size,default optional value 128/160/320/480/640/1280')
+    parser.add_argument('--threshold', default=0.4, type=float, help='score threshold')
+    parser.add_argument('--candidate_size', default=1500, type=int, help='nms candidate size')
+    parser.add_argument('--test_device', default="cuda:0", type=str, help='cuda:0 or cpu')
     args = parser.parse_args()
-    define_img_size(args.input_size)  # must put define_img_size() before 'import create_mb_tiny_fd, create_mb_tiny_fd_predictor'
+    define_img_size(
+        args.input_size)  # must put define_img_size() before 'import create_mb_tiny_fd, create_mb_tiny_fd_predictor'
 
     from vision.ssd.mb_tiny_fd import create_mb_tiny_fd, create_mb_tiny_fd_predictor
     from vision.ssd.mb_tiny_RFB_fd import create_Mb_Tiny_RFB_fd, create_Mb_Tiny_RFB_fd_predictor
 
-    result_path = "./detect_imgs_results"
     label_path = "./models/voc-model-labels.txt"
     test_device = args.test_device
 
@@ -84,10 +81,6 @@ if __name__ == '__main__':
         sys.exit(1)
     net.load(model_path)
 
-    if not os.path.exists(result_path):
-        os.makedirs(result_path)
-    listdir = os.listdir(args.path)
-
     sort = Sort()
     counter = 0
     resize = (960, 540)
@@ -104,7 +97,7 @@ if __name__ == '__main__':
 
         list_bboxes = sort.update(numpy.array(boxes))
         list_bboxes = list_bboxes.astype(int).tolist()
-        for i,j in zip(list_bboxes,range(0, len(list_bboxes))):
+        for i, j in zip(list_bboxes, range(0, len(list_bboxes))):
             i.insert(4, 'person')
             list_bboxes[j] = tuple(list_bboxes[j])
 
