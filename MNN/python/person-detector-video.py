@@ -20,13 +20,12 @@ import torch
 
 sys.path.append('../../')
 import vision.utils.box_utils_numpy as box_utils
-#/home/uc/RFSong-779-master/VOC2007/VOCdevkit/VOC2007/JPEGImages
+
 parser = argparse.ArgumentParser(description='run ultraface with MNN in py')
-parser.add_argument('--model_path', default="../model/version-RFB/617-1-sq.mnn", type=str, help='model path')
-parser.add_argument('--input_size', default="300,300", type=str,
-                    help='define network input size,format: width,height')
+parser.add_argument('--model_path', default="../model/version-RFB/617-1.mnn", type=str, help='model path')
+parser.add_argument('--input_size', default="300,300", type=str,help='define network input size,format: width,height')
 parser.add_argument('--threshold', default=0.4, type=float, help='score threshold')
-parser.add_argument('--imgs_path', default="/home/uc/RFSong-779-master/VOC2007/VOCdevkit/VOC2007/JPEGImages", type=str, help='imgs dir')
+parser.add_argument('--imgs_path', default="../imgs_out", type=str, help='imgs dir')
 parser.add_argument('--results_path', default="results", type=str, help='results dir')
 args = parser.parse_args()
 
@@ -123,7 +122,7 @@ def inference():
     if not os.path.exists(result_path):
         os.makedirs(result_path)
     listdir = os.listdir(imgs_path)
-    cap = cv2.VideoCapture('2020-06-17-11-32-11.mp4')
+    cap = cv2.VideoCapture(0)  # '../../video/test.mp4'
 
     while True:
     #for file_path in listdir:
@@ -139,6 +138,7 @@ def inference():
         image = image.astype(float)
         image = (image - image_mean) / image_std
         image = image.transpose((2, 0, 1))
+        image = image.astype(np.float32)
         tmp_input = MNN.Tensor((1, 3, input_size[1], input_size[0]), MNN.Halide_Type_Float, image, MNN.Tensor_DimensionType_Caffe)
         input_tensor.copyFrom(tmp_input)
         time_time = time.time()
